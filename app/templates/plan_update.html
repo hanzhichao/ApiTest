@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}添加测试计划{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li><a href="{% url 'plan_list' %}">测试计划</a></li>
+		  <li>修改测试计划</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">修改测试计划</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">测试计划名称</label>
+							<div class="col-sm-10">
+								<input id="name" name="name" type="text" class="form-control" value="{{plan.name}}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="url" class="col-sm-2 control-label">选择环境</label>
+							<div class="col-sm-10">
+								<select name='env_id' class="form-control">
+									{% for env in env_list %}
+									<option value="{{env.id}}" {% if env in plan.environment %}selected="true"{% endif %}>{{env.name}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group form-inline">
+							<label for="case" class="col-sm-2 control-label">添加用例</label>
+							<div class="col-sm-10">
+								{% for case in case_list %}
+								<label>
+									<input type="checkbox" name='test_cases' {% if case in plan.test_cases.all %}checked="true"{% endif %} value="{{case.id}}">
+									<span>{{case.name}}</span>
+								</label>
+								{% endfor %}
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="content" class="col-sm-2 control-label">测试计划内容</label>
+							<div class="col-sm-10">
+								<textarea id="content" name="content" class="form-control" rows="3">{{plan.content}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">测试计划描述</label>
+							<div class="col-sm-10">
+								<textarea id="description" name="description" class="form-control" rows="3" style="resize: none;">{{plan.description}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="submit" class="btn btn-default">保存</button>
+						    </div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}

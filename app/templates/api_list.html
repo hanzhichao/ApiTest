@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li>接口</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-body">
+					<form style="padding: 10px 0; ">
+						<a href="{% url 'api_add' %}"><button type="button" class="btn btn-primary">添加接口</button></a>
+					</form>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>接口名称</th>
+								<th>项目名称</th>
+								<th>接口地址</th>
+								<th>请求方法</th>
+								<th>数据类型</th>
+								<th>接口描述</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for api in api_list %}
+							<tr>
+								<td>{{api.id}}</td>
+								<td>{{api.name}}</td>
+								<td>{{api.project.name}}</td>
+								<td>{{api.url}}</td>
+								<td>{{api.get_method_display}}</td>
+								<td>{{api.get_data_type_display}}</td>
+								<td>{{api.description}}</td>
+								<td>
+									<a href="#"><span class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#delModal_{{api.id}}"></span></a>&nbsp;&nbsp;
+                  <div id="delModal_{{api.id}}" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title">删除确认</h4>
+                        </div>
+                        <div class="modal-body">
+                          <p>是否确认删除接口？</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                          <a href="{% url 'api_del' api.id %}"><button type="button" class="btn btn-danger">删除</button></a>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+                  <a href="{% url 'api_update' api.id %}"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+                  <a href="#"><span class="glyphicon glyphicon-play" data-toggle="modal" data-target="#testModal"></span></a>
+                  <script type="text/javascript">
+                      function testApi(){
+                          $.ajax({
+                              type: "POST",
+                              url: "{% url 'api_test' api.id %}" ,//url
+                              data: $('#api_test_form').serialize(),
+                              success: function (result) {
+                                  $("#test_response").html(result);
+                              },
+                              error : function() {
+                                  console.log(result);
+                              }
+                          });
+                      }
+                  </script>
+                  <div id="testModal" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title">测试接口</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form name="api_test_form" id="api_test_form" class="form-horizontal">
+                              <div class="form-group">
+                                  <label for="prj_id" class="col-sm-2 control-label">选择环境</label>
+                                  <div class="col-sm-10">
+                                      <select name="env_id" class="form-control">
+                                          {% for env in env_list %}
+                                          <option value="{{env.id}}">{{env.name}}</option>
+                                          {% endfor %}
+                                      </select>
+                                  </div>
+                              </div>
+                              <pre id='test_response'>--- 响应结果 ---</pre>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" onclick="testApi()">发送</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+								</td>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}

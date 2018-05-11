@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}添加用例{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li><a href="{% url 'case_list' %}">用例</a></li>
+		  <li><a href="{% url 'case_add' %}">添加用例</a></li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">添加用例</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">用例名称</label>
+							<div class="col-sm-10">
+								<input id="name" name="name" type="text" class="form-control" value="{{case.name}}">
+							</div>
+						</div>
+						<div class="form-group form-inline">
+							<label for="api" class="col-sm-2 control-label">添加接口</label>
+							<div class="col-sm-10">
+								{% for api in api_list %}
+								<label>
+									<input name="apis" type="checkbox" {% if api in case.apis.all %}checked="true"{% endif %} value="{{api.id}}">
+									<span>{{api.name}}</span>
+								</label>
+								{% endfor %}
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="content" class="col-sm-2 control-label">用例内容</label>
+							<div class="col-sm-10">
+								<textarea id="content" name="content" class="form-control" rows="3">{{case.content}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">用例描述</label>
+							<div class="col-sm-10">
+								<textarea id="description" name="description" class="form-control" rows="3">{{case.description}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="submit" class="btn btn-default">保存</button>
+						    </div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}

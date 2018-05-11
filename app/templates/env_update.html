@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}添加环境{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li><a href="{% url 'env_list' %}">环境</a></li>
+		  <li>修改环境</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">修改环境</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">环境名称</label>
+							<div class="col-sm-10">
+								<input id="name" name="name" type="text" class="form-control" value="{{ env.name }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="url" class="col-sm-2 control-label">项目名称</label>
+							<div class="col-sm-10">
+								<select name="prj_id" class="form-control">
+									{% for prj in prj_list %}
+									<option value="{{prj.id}}">{{prj.name}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="url" class="col-sm-2 control-label">环境Url</label>
+							<div class="col-sm-10">
+								<input id="url" name="url" type="text" class="form-control" value="{{ env.url }}">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="access_id" class="col-sm-2 control-label">AccessID</label>
+							<div class="col-sm-10">
+								<input id="access_id" name="access_id" class="form-control" value="{{ env.access_id }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="access_key" class="col-sm-2 control-label">AccessKey</label>
+							<div class="col-sm-10">
+								<input id="access_key" name="access_key" class="form-control" value="{{ env.access_key }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">环境描述</label>
+							<div class="col-sm-10">
+								<textarea id="description" name="description" class="form-control" rows="3" style="resize: none;">{{ env.description }}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="submit" class="btn btn-default">保存</button>
+						    </div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}

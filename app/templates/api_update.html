@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}添加接口{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li><a href="{% url 'api_list' %}">接口</a></li>
+		  <li>修改接口</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">修改接口</h3>
+				</div>
+				<div class="panel-body">
+					<form name='api_detail_form' id='api_detail_form' class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">接口名称</label>
+							<div class="col-sm-10">
+								<div class="input-group">
+									<input id="name" name="name" type="text" class="form-control" value="{{api.name}}">
+									<span class="input-group-btn">
+								    	<button class="btn btn-default" data-toggle="modal" data-target="#testModal" type="button">测试</button>
+								    </span>
+                                    <div id="testModal" class="modal fade" tabindex="-1" role="dialog">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">测试接口</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <div class="form-group">
+												<label for="prj_id" class="col-sm-2 control-label">选择环境</label>
+												<div class="col-sm-10">
+													<select name="env_id" class="form-control">
+														{% for env in env_list %}
+														<option value="{{env.id}}">{{env.name}}</option>
+														{% endfor %}
+													</select>
+												</div>
+											</div>
+											<pre id='test_response'>--- 响应结果 ---</pre>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" onclick="testAction()">发送</button>
+                                          </div>
+                                        </div><!-- /.modal-content -->
+                                      </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">接口描述</label>
+							<div class="col-sm-10">
+								<textarea id="description" name="description" class="form-control" rows="3" style="resize: none;">{{api.description}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="prj_id" class="col-sm-2 control-label">项目名称</label>
+							<div class="col-sm-10">
+								<select name="prj_id" class="form-control">
+									{% for prj in prj_list %}
+									<option value="{{prj.id}}" {% if api.project == prj %}selected="selected"{% endif%}>{{prj.name}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="url" class="col-sm-2 control-label">接口Url</label>
+							<div class="col-sm-8" style="padding-right: 0">
+								<input id="url" name="url" type="text" class="form-control" value="{{api.url}}">
+							</div>
+							<div class="col-sm-2" style="padding-left: 0">
+						      	<select name="method" class="form-control">
+						      		<option value="1" {% if api.method == 1 %}selected="selected"{% endif%}>POST</option>
+						      		<option value="2" {% if api.method == 2 %}selected="selected"{% endif%}>GET</option>
+						      	</select>
+							</div>
+						</div>
+						<div class="form-group form-inline">
+							<label for="data_type" class="col-sm-2 control-label">数据类型</label>
+							<div class="col-sm-10">
+								<label style="padding-right: 20px">
+									<input name="data_type" value="1" {% if api.data_type == 1 %}checked="checked"{% endif%} type="radio">
+									<span>JSON</span>
+								</label>
+								<label style="padding-right: 20px">
+									<input name="data_type" value="2" {% if api.data_type == 2 %}checked="checked"{% endif%} type="radio">
+									<span>FORM</span>
+								</label>
+								<label>
+									<input name="data_type" value="3" {% if api.data_type == 3 %}checked="checked"{% endif%} type="radio">
+									<span>XML</span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="request_body" class="col-sm-2 control-label">请求数据</label>
+							<div class="col-sm-10">
+								<textarea id="request_body" name="request_body" class="form-control" rows="5">{{api.request_body}}</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="request_body" class="col-sm-2 control-label">响应数据</label>
+							<div class="col-sm-10">
+								<textarea id="request_body" name="response_body" class="form-control" rows="5"></textarea>
+							</div>
+						</div>
+						<div class="form-group form-inline">
+						    <div class="col-sm-offset-2 col-sm-10">
+							    <button type="submit" class="btn btn-default">保存</button>
+						    </div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+	function testAction(){
+	    $.ajax({
+            //几个参数需要注意一下
+            type: "POST",//方法类型
+            // dataType: "json",//预期服务器返回的数据类型
+            url: "{% url 'api_test' %}" ,//url
+            data: $('#api_detail_form').serialize(),
+            success: function (result) {
+            	$("#test_response").html(result);
+            },
+            error : function() {
+                console.log(result);//打印服务端返回的数据(调试用)
+            }
+        });
+	}
+</script>
+{% endblock %}

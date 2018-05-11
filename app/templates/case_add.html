@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}添加用例{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li><a href="{% url 'case_list' %}">用例</a></li>
+		  <li>添加用例</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">添加用例</h3>
+				</div>
+				<div class="panel-body">
+					<form id="add_case_form" class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+						<input id="case_id_input" name='case_id' type="hidden" value="">
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">用例名称</label>
+							<div class="col-sm-10">
+                                <input id="name" name="name" type="text" class="form-control" value="{{case.name}}">
+								<!--<div class="input-group">
+									<input id="name" name="name" type="text" class="form-control" value="{{case.name}}">
+									<span class="input-group-btn">
+								    	<button class="btn btn-default" data-toggle="modal" data-target="#testModal" type="button">测试</button>
+								    </span>
+                                    <div id="testModal" class="modal fade" tabindex="-1" role="dialog">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">测试用例</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <div class="form-group">
+												<label for="prj_id" class="col-sm-2 control-label">选择环境</label>
+												<div class="col-sm-10">
+													<select name="env_id" class="form-control">
+														{% for env in env_list %}
+														<option value="{{env.id}}">{{env.name}}</option>
+														{% endfor %}
+													</select>
+												</div>
+											</div>
+											<pre id='test_response'>--- 测试结果 ---</pre>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" onclick="testAction()">发送</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+								</div>-->
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="plan_id" class="col-sm-2 control-label">测试计划</label>
+							<div class="col-sm-10">
+								<select id='plan_select' name="plan_id" class="form-control">
+									{% for plan in plan_list %}
+									<option value="{{plan.id}}">{{plan.name}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">用例描述</label>
+							<div class="col-sm-10">
+								<textarea id="description" name="description" class="form-control" rows="3" style="resize: none;"></textarea>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="steps" class="col-sm-2 control-label">用例步骤</label>
+							<div id="steps" class="col-sm-10">
+								<table id="steps_table" class="table table-bordered">
+									<tr>
+										<th>序号</th>
+										<th>项目名称</th>
+										<th>接口名称</th>
+										<th>接口数据</th>
+										<th>接口断言</th>
+										<th>操作</th>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStepModal">添加步骤</button>&nbsp;&nbsp;
+						      <button type="button" class="btn btn-default" onclick="saveCase()">保存</button>
+						    </div>
+						    <div id="addStepModal" class="modal fade" tabindex="-1" role="dialog">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">添加步骤</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="form-group">
+										<label for="prj_id" class="col-sm-2 control-label">选择项目</label>
+										<div class="col-sm-10">
+											<select id='prj_select' name="prj_id" class="form-control" onchange='getApiOfProject()'>
+												{% for prj in prj_list %}
+												<option value="{{prj.id}}">{{prj.name}}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="api_id" class="col-sm-2 control-label">选择接口</label>
+										<div class="col-sm-10">
+											<select id='api_select' name="api_id" class="form-control">
+												
+											</select>
+										</div>
+									</div>
+<!-- 									<div class="form-group">
+										<label for="request_body" class="col-sm-2 control-label">请求数据</label>
+										<div class="col-sm-10">
+											<textarea id="request_body" name="request_body" class="form-control" rows="5" style="resize:none;"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="request_body" class="col-sm-2 control-label">响应断言</label>
+										<div class="col-sm-10">
+											<textarea id="request_body" name="response_body" class="form-control" rows="5" style="resize:none;"></textarea>
+										</div>
+									</div> -->
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                                    <button id="save_case_btn"type="button" data-dismiss="modal" class="btn btn-danger" onclick="addStep()">添加</button>
+                                  </div>
+                                </div><!-- /.modal-content -->
+                              </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+	sn = 0;
+	case_id = 1;
+	$(document).ready(getApiOfProject());
+	function getApiOfProject(){
+		var prj_id = $("#prj_select").val()
+	    $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "{% url 'api_of_project' %}?prj_id=" + prj_id ,
+            success: function (result) {
+            	$("#api_select").empty();
+            	if(result){
+            		for(var i = 0;i<result.length;i++){
+            			$("#api_select").append('<option value="'+result[i][0]+'">'+result[i][1]+'</option>');
+            		}
+            	}
+            },
+            error: function() {
+                console.log(result);
+            }
+        });
+	};
+	function addStep(){
+		sn = sn+1;
+		var prj_name = $("#prj_select").find("option:selected").text();
+		var api_name = $("#api_select").find("option:selected").text();
+		var api_id = $("#api_select").find("option:selected").val();
+		$("#steps_table").append('<tr id="step_'+sn+'"><td>'+sn+'</td><td>'+prj_name+'</td><td value="'+api_id+'">'+api_name+'</td><td style="padding:0;margin:0;"><textarea name="request_data" class="form-control" style="border:none;resize:none;" rows="5"></textarea></td><td style="padding:0;margin:0;"><textarea name="assertion" class="form-control" style="border:none;resize: none;" rows="5"></textarea></td><td><a class="param-remove" href="#" onclick="removeStep('+sn+')"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;&nbsp;<!--<a href="#"><span class="glyphicon glyphicon-play" data-toggle="modal" data-target="#testModal"></span></a>--></td></tr>');
+		
+	};
+	function removeStep(i){
+		$("#step_"+i).remove();
+		console.log(sn)
+		for(j=i+1;j<=sn;j++){
+			$("#step_"+j+" td:first").html(""+j-1);
+			$("#step_"+j+" td:last").html('<a class="param-remove" href="#" onclick="removeStep('+(j-1)+')"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;&nbsp;<a href="#"><span class="glyphicon glyphicon-play" data-toggle="modal" data-target="#testModal"></span></a>');
+			$("#step_"+j).attr('id',"step_"+(j-1));
+		}
+		sn=sn-1;
+	};
+
+	function saveSteps(steps){
+		$.ajax({
+            type: "POST",
+            dataType: "json",
+            async: false,
+            contentType: 'application/json',
+            url: "{% url 'save_steps' %}",
+            data: JSON.stringify(steps),
+            success: function (result) {
+            	// console.log(case_id)
+            	if(result){
+            		case_id = result.case_id;
+            		console.log(result)
+            	} 	
+            },
+            error: function() {
+                console.log(result);
+            }
+        });
+	};
+
+	function saveCase(){
+		var steps = [];
+		for(var i=1;i<=sn;i++){
+			cur_sn = $("#steps_table").find("tr").eq(i).find("td").eq(0).text();
+			api_id = $("#steps_table").find("tr").eq(i).find("td").eq(2).attr("value");
+			data = $("#steps_table").find("tr").eq(i).find("td").eq(3).find("textarea").val();
+			assertion = $("#steps_table").find("tr").eq(i).find("td").eq(4).find("textarea").val();
+			steps.push({"sn":cur_sn, "api_id":api_id, "data":data, "assertion":assertion})
+		}
+		saveSteps(steps);
+		$("#case_id_input").attr("value", case_id);
+		$("#add_case_form").submit();
+
+	};
+
+</script>
+{% endblock %}

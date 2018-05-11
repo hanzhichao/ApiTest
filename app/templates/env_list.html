@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li>环境</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-body">
+					<form style="padding: 10px 0; ">
+						<a href="{% url 'env_add' %}"><button type="button" class="btn btn-primary">添加环境</button></a>
+					</form>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>环境名称</th>
+								<th>环境描述</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for env in env_list %}
+							<tr>
+								<td>{{env.id}}</td>
+								<td>{{env.name}}</td>
+								<td>{{env.description}}</td>
+								<td>
+									<a href="#"><span class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#delModal"></span></a>&nbsp;&nbsp;
+                                    <div id="delModal" class="modal fade" tabindex="-1" role="dialog">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">删除确认</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>是否确认删除环境？</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                                            <a href="{% url 'env_del' env.id %}"><button type="button" class="btn btn-danger">删除</button></a>
+                                          </div>
+                                        </div><!-- /.modal-content -->
+                                      </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
+                                    <a href="{% url 'env_update' env.id %}"><span class="glyphicon glyphicon-edit"></span></a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}

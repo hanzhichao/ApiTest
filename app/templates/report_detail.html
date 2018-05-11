@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="#">主页</a></li>
+		  <li><a href="{% url 'report_list' %}">报告</a></li>
+		  <li>测试报告详情</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">测试报告详情: {{report.test_plan.name}}</h3>
+				</div>
+				<div class="panel-body">
+					<div><strong>用例总数: </strong>{{report.case_num}}&nbsp;&nbsp;&nbsp;<strong>通过数量：</strong>{{report.pass_num}}&nbsp;&nbsp;&nbsp;<strong>失败数量: </strong>{{report.fail_num}}&nbsp;&nbsp;&nbsp;<strong>出错数量: </strong>{{report.error_num}}</div>
+					<br>
+					<!-- <div>开始时间: 结束时间：总用时:</div> -->
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>测试用例</th>
+								<th>步骤详情</th>
+								<th>测试结果</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for case_result in case_result_list %}
+							<tr>
+								<td>{{case_result.case.id}}</td>
+								<td>{{case_result.case.name}}</td>
+								<td>
+								{% for step_result in step_result_list %}
+									{% if step_result.test_case_result.id == case_result.id %}
+									<ul style="list-style:none;"><li>api_name: {{step_result.api_name}}</li>
+									<li>api_url: {{step_result.api_url}}</li>
+									<li>api_headers: {{step_result.api_headers}}</li>
+									<li>api_data: {{step_result.api_data}}</li>
+									<li>api_response: {{step_result.api_response}}</li>
+									<li>status: {{step_result.status}}</li>
+									<li></li></ul>
+									{% endif %}
+								{% endfor%}
+								</td>
+								<td>{{case_result.status}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}

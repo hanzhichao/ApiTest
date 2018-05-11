@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li>签名</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-body">
+					<br>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>签名名称</th>
+								<th>签名描述</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for sign in sign_list %}
+							<tr>
+								<td>{{sign.id}}</td>
+								<td>{{sign.name}}</td>
+								<td>{{sign.description}}</td>
+								<td>
+                                    <a href="{% url 'sign_detail' sign.id %}"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}

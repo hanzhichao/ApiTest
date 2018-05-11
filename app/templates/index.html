@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- OVERVIEW -->
+            <div class="panel panel-headline">
+                <div class="panel-heading">
+                    <h3 class="panel-title">概览</h3>
+                    <p class="panel-subtitle">Period: Oct 14, 2016 - Oct 21, 2016</p>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <a href="{% url 'prj_list' %}">
+                                <span class="icon"><i class="fa fa-folder"></i></span>
+                                <p>
+                                    <span class="number">{{ prj_num }}</span>
+                                    <span class="title">项目</span>
+                                </p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <a href="{% url 'api_list' %}">
+                                <span class="icon"><i class="fa fa-random"></i></span>
+                                <p>
+                                    <span class="number">{{ api_num }}</span>
+                                    <span class="title">接口</span>
+                                </p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <a href="{% url 'plan_list' %}">
+                                <span class="icon"><i class="fa fa-list-alt"></i></span>
+                                <p>
+                                    <span class="number">{{ plan_num }}</span>
+                                    <span class="title">测试计划</span>
+                                </p>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <a href="{% url 'case_list' %}">
+                                <span class="icon"><i class="fa fa-anchor"></i></span>
+                                <p>
+                                    <span class="number">{{ case_num }}</span>
+                                    <span class="title">用例</span>
+                                </p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row"></div>
+                </div>
+            </div>
+            <!-- END OVERVIEW -->
+		</div>
+	</div>
+{% endblock %}

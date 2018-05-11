@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="#">主页</a></li>
+		  <li><a href="{% url 'sign_list' %}">签名</a></li>
+		  <li>签名详情</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- INPUTS -->
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">签名详情</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action='.' method="POST" >
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label" disabled="disabled">签名名称</label>
+							<div class="col-sm-10">
+								<input id="name" name="name" type="text" class="form-control" value="{{sign.name}}" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label" disabled="disabled">签名描述</label>
+							<div class="col-sm-10">
+								<input id="name" name="name" type="text" class="form-control" value="{{sign.description}}" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="content" class="col-sm-2 control-label">签名内容</label>
+							<div class="col-sm-10">
+								<textarea id="content" name="content" class="form-control" rows="15" readonly>{{sign.content}}</textarea>
+							</div>
+						</div>
+		<!-- 				<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="submit" class="btn btn-default">保存</button>
+						    </div>
+						</div> -->
+					</form>
+				</div>
+			</div>
+			<!-- END INPUTS -->
+		</div>
+	</div>
+{% endblock %}

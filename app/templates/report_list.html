@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li>测试报告</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-body">
+					<br>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>测试计划</th>
+                                <th>测试环境</th>
+                                <th>用例总数</th>
+                                <th class="text-success">通过</th>
+                                <th class="text-danger">失败</th>
+                                <th class="text-warning">出错</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for report in report_list %}
+							<tr>
+								<td>{{report.id}}</td>
+                                <td>{{report.test_plan.name}}</td>
+                                <td>{{report.test_plan.environment}}</td>
+                                <td>{{report.case_num}}</td>
+                                <td>{{report.pass_num}}</td>
+                                <td>{{report.fail_num}}</td>
+                                <td>{{report.error_num}}</td>
+								<td>
+									<a href="#"><span class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#delModal"></span></a>&nbsp;&nbsp;
+                                    <div id="delModal" class="modal fade" tabindex="-1" role="dialog">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">删除确认</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>是否确认删除测试报告？</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                                            <a href="{% url 'report_del' report.id %}"><button type="button" class="btn btn-danger">删除</button></a>
+                                          </div>
+                                        </div><!-- /.modal-content -->
+                                      </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
+                                    <a href="{% url 'report_detail' report.id %}"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}

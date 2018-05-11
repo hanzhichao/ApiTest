@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% load staticfiles %}
+{% block content %}
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li><a href="{% url 'index' %}">主页</a></li>
+		  <li>测试计划</li>
+		</ol>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- BORDERED TABLE -->
+			<div class="panel">
+				<div class="panel-body">
+					<form style="padding: 10px 0; ">
+						<a href="{% url 'plan_add' %}"><button type="button" class="btn btn-primary">添加测试计划</button></a>
+					</form>
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>测试计划名称</th>
+								<th>测试环境</th>
+								<th>测试计划描述</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for plan in plan_list %}
+							<tr>
+								<td>{{plan.id}}</td>
+								<td>{{plan.name}}</td>
+								<td>{{plan.environment}}</td>
+								<td>{{plan.description}}</td>
+								<td>
+									<a id="action_del_{{plan.id}}" href="#"><span class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#delModal"></span></a>&nbsp;&nbsp;
+                                    <div id="delModal" class="modal fade" tabindex="-1" role="dialog">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">删除确认</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>是否确认删除测试计划？</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                                            <a href="{% url 'plan_del' plan.id %}"><button type="button" class="btn btn-danger">删除</button></a>
+                                          </div>
+                                        </div><!-- /.modal-content -->
+                                      </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
+                                    <a id="action_edit_{{plan.id}}" href="{% url 'plan_update' plan.id %}"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+                                    <a id="action_detail_{{plan.id}}" href="{% url 'plan_report' plan.id %}"><span class="glyphicon glyphicon-option-horizontal"></span></a>&nbsp;&nbsp;
+                                    <a id="action_run_{{plan.id}}" href="#" onclick="runTestPlan({{plan.id}})"><span class="glyphicon glyphicon-play"></span></a>
+                                    <a id="action_loading_{{plan.id}}" href="#" hidden="true"><img src="{% static 'img/loading.gif' %}" style="width: 20px;height: 20px;" /></a>
+
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- END BORDERED TABLE -->
+		</div>
+	</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    function runTestPlan(plan_id){
+        $("#action_del_"+plan_id).attr("hidden", "true");
+        $("#action_edit_"+plan_id).attr("hidden", "true");
+        $("#action_detail_"+plan_id).attr("hidden", "true");
+        $("#action_run_"+plan_id).attr("hidden", "true");
+        $("#action_loading_"+plan_id).removeAttr("hidden");
+        $.ajax({
+            type: "GET",
+            // dataType: "json",
+            url: "{% url 'plan_run' %}?plan_id=" + plan_id ,
+            success: function (result) {
+                if(result){
+                    console.log(result);
+                    $("#action_del_"+plan_id).removeAttr("hidden");
+                    $("#action_edit_"+plan_id).removeAttr("hidden");
+                    $("#action_detail_"+plan_id).removeAttr("hidden");
+                    $("#action_run_"+plan_id).removeAttr("hidden");
+                    $("#action_loading_"+plan_id).attr("hidden", "true");
+
+                }
+            },
+            error: function() {
+                console.log(result);
+                
+            }
+        });
+    };
+</script>
+{% endblock %}
+
