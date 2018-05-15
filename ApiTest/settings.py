@@ -13,7 +13,7 @@ SECRET_KEY = 'z-h6t3o!!%f@z+guyx5(7&!1t3&d4!=$o7_!8a09m2&jtpsgd8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -64,8 +64,12 @@ WSGI_APPLICATION = 'ApiTest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'api_test',
+        'USER': 'root',
+        'PASSWORD': 'spice',
+        'HOST': '192.168.100.198',
+        'PORT': '3306',
     }
 }
 
