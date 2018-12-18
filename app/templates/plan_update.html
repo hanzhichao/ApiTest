@@ -34,23 +34,6 @@
 								</select>
 							</div>
 						</div>
-						<div class="form-group form-inline">
-							<label for="case" class="col-sm-2 control-label">添加用例</label>
-							<div class="col-sm-10">
-								{% for case in case_list %}
-								<label>
-									<input type="checkbox" name='test_cases' {% if case in plan.test_cases.all %}checked="true"{% endif %} value="{{case.id}}">
-									<span>{{case.name}}</span>
-								</label>
-								{% endfor %}
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="content" class="col-sm-2 control-label">测试计划内容</label>
-							<div class="col-sm-10">
-								<textarea id="content" name="content" class="form-control" rows="3">{{plan.content}}</textarea>
-							</div>
-						</div>
 						<div class="form-group">
 							<label for="description" class="col-sm-2 control-label">测试计划描述</label>
 							<div class="col-sm-10">

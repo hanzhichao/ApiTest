@@ -20,6 +20,11 @@ urlpatterns = [
     path('env/update/<int:env_id>/', env_update, name='env_update'),
     path('env/del/<int:env_id>/', env_del, name='env_del'),
 
+    path('prj_env/', prj_env_list, name='prj_env_list'),
+    path('prj_env/add/', prj_env_add, name='prj_env_add'),
+    path('prj_env/update/<int:prj_env_id>/', prj_env_update, name='prj_env_update'),
+    path('prj_env/del/<int:prj_env_id>/', prj_env_del, name='prj_env_del'),
+
     path('api/', api_list, name='api_list'),
     path('api/add/', api_add, name='api_add'),
     path('api/update/<int:api_id>/', api_update, name='api_update'),

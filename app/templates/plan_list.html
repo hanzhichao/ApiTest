@@ -21,7 +21,8 @@
 							<tr>
 								<th>ID</th>
 								<th>测试计划名称</th>
-								<th>测试环境</th>
+                                <th>测试环境</th>
+								<th>用例列表</th>
 								<th>测试计划描述</th>
 								<th>操作</th>
 							</tr>
@@ -31,7 +32,13 @@
 							<tr>
 								<td>{{plan.id}}</td>
 								<td>{{plan.name}}</td>
-								<td>{{plan.environment}}</td>
+                                <td>{{plan.environment}}</td>
+								<td><ul>
+                                    {% for case in case_list %}{% if case.plan == plan %}
+                                        <li>{{case.name}}</li>
+                                    {% endif %}
+                                    {% endfor %}</ul>
+                                </td>
 								<td>{{plan.description}}</td>
 								<td>
 									<a id="action_del_{{plan.id}}" href="#"><span class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#delModal"></span></a>&nbsp;&nbsp;

@@ -36,12 +36,12 @@
 								<td>
 								{% for step_result in step_result_list %}
 									{% if step_result.test_case_result.id == case_result.id %}
-									<ul style="list-style:none;"><li>api_name: {{step_result.api_name}}</li>
-									<li>api_url: {{step_result.api_url}}</li>
-									<li>api_headers: {{step_result.api_headers}}</li>
-									<li>api_data: {{step_result.api_data}}</li>
-									<li>api_response: {{step_result.api_response}}</li>
-									<li>status: {{step_result.status}}</li>
+									<h5>Step</h5>
+									<ul style="list-style:none;"><li>接口名称: {{step_result.api_name}}</li>
+									<li>Url: {{step_result.api_url}}</li>
+									<li>请求数据: {{step_result.api_data}}</li>
+									<li>相应数据: {{step_result.api_response}}</li>
+									<li>状态: {{step_result.status}}</li>
 									<li></li></ul>
 									{% endif %}
 								{% endfor%}

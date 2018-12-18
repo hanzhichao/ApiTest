@@ -64,12 +64,14 @@ WSGI_APPLICATION = 'ApiTest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'api_test',
-        'USER': 'root',
-        'PASSWORD': 'spice',
-        'HOST': '192.168.100.198',
-        'PORT': '3306',
+    	'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db3.sqlite3'),
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'api_test',
+        # 'USER': 'root',
+        # 'PASSWORD': 'spice',
+        # 'HOST': '192.168.100.198',
+        # 'PORT': '3306',
     }
 }
 

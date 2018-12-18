@@ -139,7 +139,6 @@ class StepResult(models.Model):
     step = models.ForeignKey('Step', on_delete=models.CASCADE, verbose_name='步骤')
     api_name = models.CharField('接口名称', max_length=100, blank=True, null=True)
     api_url = models.CharField('接口Url', max_length=100, blank=True, null=True)
-    api_headers = models.CharField('请求头', max_length=100, blank=True, null=True)
     api_data = models.CharField('请求数据', max_length=100, blank=True, null=True)
     api_response = models.CharField('响应内容', max_length=100, blank=True, null=True)
     status = models.CharField('状态', max_length=10, blank=True, null=True)

@@ -65,7 +65,7 @@ def prj_add(request):
         else:
             description = request.POST.get('description')
             developer = request.POST.get('developer')
-            prj = Project(name=name, is_sign=is_sign, developer=developer, description=description)
+            prj = Project(name=name, developer=developer, description=description)
             prj.save()
             return HttpResponseRedirect('/project/')
     return render(request, "project_add.html")
@@ -100,16 +100,10 @@ def env_list(request):   # project_list
 def env_add(request):
     if request.method == 'POST':
         name = request.POST.get('name')
-        project = get_object_or_404(Project, id=request.POST.get('prj_id'))
-        url = request.POST.get('url')
-        access_id = request.POST.get('access_id')
-        access_key = request.POST.get('access_key')
         description = request.POST.get('description')
-        env = Environment(name=name, project=project, url=url, access_id=access_id,
-                          access_key=access_key, description=description)
+        env = Environment(name=name, description=description)
         env.save()
         return HttpResponseRedirect('/env/')
-    prj_list = Project.objects.all()
     return render(request, "env_add.html", {'prj_list': prj_list})
 
 
@@ -117,16 +111,10 @@ def env_add(request):
 def env_update(request, env_id):
     if request.method == 'POST':
         name = request.POST.get('name')
-        project = get_object_or_404(Project, id=request.POST.get('prj_id'))
-        url = request.POST.get('url')
-        access_id = request.POST.get('access_id')
-        access_key = request.POST.get('access_key')
         description = request.POST.get('description')
-        Environment.objects.filter(id=env_id).update(name=name, project=project, url=url, access_id=access_id,
-                                                     access_key=access_key, description=description)
+        Environment.objects.filter(id=env_id).update(name=name, description=description)
         return HttpResponseRedirect('/env/')
     env = get_object_or_404(Environment, id=env_id)
-    prj_list = Project.objects.all()
     return render(request, "env_update.html", {"env": env, 'prj_list': prj_list})
 
 
@@ -135,6 +123,62 @@ def env_del(request, env_id):
     if request.method == 'GET':
         Environment.objects.filter(id=env_id).delete()
         return HttpResponseRedirect('/env/')
+
+
+
+# 项目环境操作 -----------------------------------------------------------------------------------------
+@login_required
+def prj_env_list(request):   # project_list
+    prj_env_list = ProjectEnv.objects.all()
+    return render(request, "prj_env_list.html", {"prj_env_list": prj_env_list})
+
+
+@login_required
+def prj_env_add(request):
+    if request.method == 'POST':
+        env = get_object_or_404(Environment, id=request.POST.get('env_id'))
+        project = get_object_or_404(Project, id=request.POST.get('prj_id'))
+        sign = get_object_or_404(Sign, id=request.POST.get('sign_id'))
+        url = request.POST.get('url')
+        access_id = request.POST.get('access_id')
+        access_key = request.POST.get('access_key')
+        description = request.POST.get('description')
+        prj_env = ProjectEnv(env=env, project=project, sign=sign, url=url, access_id=access_id,
+                          access_key=access_key)
+        prj_env.save()
+        return HttpResponseRedirect('/prj_env/')
+    prj_list = Project.objects.all()
+    env_list = Environment.objects.all()
+    sign_list = Sign.objects.all()
+    return render(request, "prj_env_add.html", {'prj_list': prj_list, 'env_list': env_list, 'sign_list': sign_list})
+
+
+@login_required
+def prj_env_update(request, prj_env_id):
+    if request.method == 'POST':
+        env = get_object_or_404(Environment, id=request.POST.get('env_id'))
+        project = get_object_or_404(Project, id=request.POST.get('prj_id'))
+        sign = get_object_or_404(Sign, id=request.POST.get('sign_id'))
+        url = request.POST.get('url')
+        access_id = request.POST.get('access_id')
+        access_key = request.POST.get('access_key')
+        description = request.POST.get('description')
+        ProjectEnv.objects.filter(id=prj_env_id).update(env=env, project=project, sign=sign, url=url, access_id=access_id,
+                                                     access_key=access_key)
+        return HttpResponseRedirect('/prj_env/')
+    prj_env = get_object_or_404(ProjectEnv, id=prj_env_id)
+    env_list = Environment.objects.all()
+    prj_list = Project.objects.all()
+    sign_list = Sign.objects.all()
+    return render(request, "prj_env_update.html", {"prj_env": prj_env, 'prj_list': prj_list, 'env_list': env_list, 'sign_list': sign_list})
+
+
+@login_required
+def prj_env_del(request, prj_env_id):
+    if request.method == 'GET':
+        ProjectEnv.objects.filter(id=prj_env_id).delete()
+        return HttpResponseRedirect('/prj_env/')
+
 
 # 接口操作 -----------------------------------------------------------------------------------------
 @login_required
@@ -217,30 +261,31 @@ def api_test(request, api_id=None):
 
     url = url if url.startswith("/") else "/" + url
     url = base_url + url
-    data = json.loads(request_body)
-
-    if not isinstance(data, dict) and not isinstance(data, list):
+    try:
+        data = json.loads(request_body)
+    except Exception as e:
         return HttpResponse('请求数据, json格式有误')
+        
 
-    # 处理签名，存在安全漏洞
-    # print(sign_content)
-    # if sign_content:
-    #     exec(sign_content)
-    # print(data)
-    data = sign.sign_params(access_id, access_key, data)
+    # 处理签名
+    if sign_content:
+        exec(sign_content)
 
-    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=utf8"}
 
-    if data_type == '1':  # json
-        data = json.dumps(data)
-        headers = {"Content-Type": "application/json; charset=utf8"}
-
-    if method and method == '2':
-        resp = requests.get(url=url, headers=headers, data=data)
+    if method == '1':
+        print("post请求")
+        if data_type == '1':
+            resp = requests.post(url=url, json=data)
+        else:
+            resp = requests.post(url=url, data=data)
     else:
-        resp = requests.post(url=url, headers=headers, data=data)
-   
-    return HttpResponse(json.dumps(resp.json(), ensure_ascii=False, indent=2))
+        resp = requests.get(url=url)
+        
+    try:
+        result = json.dumps(resp.json(), ensure_ascii=False, indent=2)
+    except Exception as e:
+        result = resp.text
+    return HttpResponse(result)
 
 
 @login_required
@@ -364,7 +409,8 @@ def case_del(request, case_id):
 @login_required
 def plan_list(request):   # project_list
     plan_list = TestPlan.objects.all()
-    return render(request, "plan_list.html", {"plan_list": plan_list})
+    case_list = TestCase.objects.all()
+    return render(request, "plan_list.html", {"plan_list": plan_list, 'case_list': case_list})
 
 
 @login_required
@@ -372,13 +418,8 @@ def plan_add(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         env = get_object_or_404(Environment, id=request.POST.get('env_id'))
-        cases = TestCase.objects.filter(id__in=request.POST.getlist('test_cases'))
         description = request.POST.get('description')
-        content = request.POST.get('content')
-        plan = TestPlan(name=name, environment=env, description=description, content=content)
-        plan.save()
-        for case in cases:
-            plan.test_cases.add(case)
+        plan = TestPlan(name=name, environment=env, description=description)
         plan.save()
         return HttpResponseRedirect('/plan/')
     case_list = TestCase.objects.all()
@@ -390,20 +431,13 @@ def plan_add(request):
 def plan_update(request, plan_id):
     if request.method == 'POST':
         name = request.POST.get('name')
-        cases = TestCase.objects.filter(id__in=request.POST.getlist('test_cases'))
-
         env = get_object_or_404(Environment, id=request.POST.get('env_id'))
         description = request.POST.get('description')
-        content = request.POST.get('content')
         plan = get_object_or_404(TestPlan, id=plan_id)
         plan.name = name
         plan.environment = env
         plan.description = description
-        plan.content = content
         plan.test_cases.clear()
-        for case in cases:
-            plan.test_cases.add(case)
-        plan.save()
         return HttpResponseRedirect('/plan/')
     
     plan = get_object_or_404(TestPlan, id=plan_id)
@@ -437,7 +471,10 @@ def plan_run(request):
         for step in case.step_set.all():
             step_api = get_object_or_404(Api, id=step.api.id)
             step_data = step.data
-            step_assertion = step.assertion.split('\n')
+            if step.assertion:
+                step_assertion = step.assertion.split('\n')
+            else:
+                step_assertion = []
             
             project_env = get_object_or_404(ProjectEnv, env=env.id, project=step_api.project.id)
             base_url = project_env.url
@@ -461,34 +498,45 @@ def plan_run(request):
                 except json.decoder.JSONDecodeError:
                     return HttpResponse('json格式错误, 请求数据: %s' % step_data)
 
-            data = sign.sign_params(access_id, access_key, data)
-            headers = {"Content-Type": "application/x-www-form-urlencoded; charset=utf8"}
+            # 处理签名
+            if sign_content:
+                exec(sign_content)
 
-            if data_type == 1:  # json
-                data = json.dumps(data)
-                headers = {"Content-Type": "application/json; charset=utf8"}
-
-            if method and method == '2':
-                response = requests.get(url=url, headers=headers, data=data)
+            print("-----------------------------------------------")
+            print(method, type(method))
+            print(url)
+            print(data)
+            if method == 1:
+                print("post请求")
+                print(data_type, type(data_type))
+                if data_type == 1:
+                    resp = requests.post(url=url, json=data)
+                else:
+                    resp = requests.post(url=url, data=data)
             else:
-                response = requests.post(url=url, headers=headers, data=data)
-            api_response = response.text
+                resp = requests.get(url=url)
+    
+            api_response = resp.text
+            print(resp.text)
 
             # 结果断言
             status = "PASS"
-            for assertion in step_assertion:
-                try:
-                    assert eval(assertion)
-                except AssertionError:
-                    status = 'FAIL'
-                    case_result['result'] = status
-                except Exception as e:
-                    status = 'ERROR'
-                    case_result['result'] = status
-                    api_response = repr(e)
-            
-            case_result["steps"].append({"api_name": step_api.name, "api_url": url, "headers": headers, "api_data": data, "api_response": api_response, "api_result": status})
-            step_result = StepResult(test_case_result=test_case_result, step=step, api_name=step_api.name, api_url=url, api_headers=headers, api_data=data, api_response=api_response, status=status)
+            if step_assertion:
+                print("=============")
+                print(step_assertion)
+                for assertion in step_assertion:
+                    try:
+                        assert eval(assertion)
+                    except AssertionError:
+                        status = 'FAIL'
+                        case_result['result'] = status
+                    except Exception as e:
+                        status = 'ERROR'
+                        case_result['result'] = status
+                        api_response = repr(e)
+                
+            case_result["steps"].append({"api_name": step_api.name, "api_url": url, "api_data": data, "api_response": api_response, "api_result": status})
+            step_result = StepResult(test_case_result=test_case_result, step=step, api_name=step_api.name, api_url=url, api_data=data, api_response=api_response, status=status)
             step_result.save()
         
         plan_result.append({"case_name": case.name, "case_result": case_result})
